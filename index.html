@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProPrint Solutions - Invoice Generator</title>
+
+    <!-- CDNs for Enhancements -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech&display=swap');
+
+        body {
+            font-family: 'Share Tech', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+            background-color: #343a40;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%239C92AC' fill-opacity='0.25' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"), linear-gradient(to right top, #343a40, #2b2c31, #211f22, #151314, #000000);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px;
+            padding: 50px;
+            background-color: rgba(255, 255, 255, 0.85);
+            color: black;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        .header,
+        .form-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1,
+        .header p,
+        .form-container h1 {
+            margin: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .header p,
+        .form-container label {
+            margin: 5px 0;
+            color: #777;
+        }
+
+        .invoice-details {
+            margin-bottom: 20px;
+        }
+
+        .invoice-details table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .invoice-details th,
+        .invoice-details td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .invoice-details th {
+            background-color: #f9f9f9;
+            text-align: left;
+        }
+
+        .invoice-footer {
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        .invoice-footer h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form-group button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+
+        .form-group .reset-button {
+            background-color: #dc3545;
+        }
+
+        .form-group .reset-button:hover {
+            background-color: #c82333;
+        }
+
+        .form-group .create-another-button {
+            background-color: #28a745;
+        }
+
+        .form-group .create-another-button:hover {
+            background-color: #218838;
+        }
+
+        .form-group .download-button {
+            background-color: #28a745;
+        }
+
+        .form-group .download-button:hover {
+            background-color: #218838;
+        }
+
+        .form-group .download-link {
+            background-color: #17a2b8;
+        }
+
+        .form-group .download-link:hover {
+            background-color: #138496;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Button styles for Edit and Delete */
+        .edit-button,
+        .delete-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+        }
+
+        .edit-button:hover {
+            background-color: #0056b3;
+        }
+
+        .delete-button:hover {
+            background-color: #c82333;
+        }
+
+        /* CSS for Download PDF button */
+        .download-link {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            max-width: 50.8vh;
+        }
+
+        .download-link:hover {
+            background-color: #218838;
+        }
+
+    </style>
+</head>
+
+<body>
+    <!-- Home Page -->
+    <div id="home-page" class="container active" data-aos="fade-right">
+        <h1>Create Invoice</h1>
+        <!-- Form for client information -->
+        <div class="form-group">
+            <label for="client-name">Client Name</label>
+            <input type="text" id="client-name" required>
+        </div>
+        <div class="form-group">
+            <label for="client-surname">Client Surname</label>
+            <input type="text" id="client-surname" required>
+        </div>
+        <div class="form-group">
+            <label for="client-phone">Phone Number</label>
+            <input type="tel" id="client-phone" pattern="[0-9]{10}" maxlength="10" required>
+            <small id="phone-error" style="color: red; display: none;">Please enter a valid 10-digit phone number.</small>
+        </div>
+        <div class="form-group">
+            <label for="client-email">Email Address</label>
+            <input type="email" id="client-email" required>
+            <small id="email-error" style="color: red; display: none;">Please enter a valid email address.</small>
+        </div>
+        <div class="form-group">
+            <label for="description">Job Description</label>
+            <select id="description" required>
+                <option value="Black & White Single-Sheet">Black & White Single-Sheet</option>
+                <option value="Color Single-Sheet">Color Single-Sheet</option>
+                <option value="Black & White Double-Sided">Black & White Double-Sided</option>
+                <option value="Color Double-Sided">Color Double-Sided</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="pages">Number of Pages</label>
+            <input type="number" id="pages" required>
+        </div>
+        <div class="form-group">
+            <label for="amount-paid">Amount Paid (Optional)</label>
+            <input type="number" id="amount-paid">
+        </div>
+
+        <div class="form-group">
+            <button type="button" onclick="generateInvoice()">Generate Invoice</button>
+        </div>
+        <div class="form-group">
+            <button type="button" class="reset-button" onclick="resetInvoiceCount()">Reset Invoice Count</button>
+        </div>
+        <div class="form-group">
+            <p>Total Number of Invoices: <span id="invoice-count">0</span></p>
+        </div>
+    </div>
+
+    <!-- Invoice Page -->
+    <div id="invoice-page" class="container" data-aos="fade-left">
+        <div class="header">
+            <h1>Pro Print Solutions</h1>
+            <p>Block 24 House 001 Ekhaya Junction</p>
+            <p>Phone: <a href="tel:0726171976">072 617 1976</a> | Email: <a href="mailto:playgroundtest0@gmail.com">playgroundtest0@gmail.com</a></p>
+            <p id="invoice-number"></p>
+        </div>
+        <div id="client-details"></div>
+        <div class="invoice-details">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Pages</th>
+                        <th>Type</th>
+                        <th>Price per Page (Rands)</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="invoice-body"></tbody>
+               
+                <tfoot>
+                    <tr>
+                        <td colspan="4" style="text-align:right"><strong>Total:</strong></td>
+                        <td id="invoice-total"></td>
+                    </tr>
+                    <tr id="amount-paid-row" style="display: none;">
+                        <td colspan="4" style="text-align:right"><strong>Amount Paid:</strong></td>
+                        <td id="amount-paid-display"></td>
+                    </tr>
+                    <tr id="change-row" style="display: none;">
+                        <td colspan="4" style="text-align:right"><strong>Change:</strong></td>
+                        <td id="change-display"></td>
+                    </tr>
+                </tfoot>
+
+            </table>
+        </div>
+        <div class="invoice-footer">
+            <h2 id="grand-total"></h2>
+        </div>
+        <div class="form-group" style="text-align: center;">
+            <button type="button" class="download-button" onclick="exportPDF()">Download Invoice</button>
+            <button type="button" class="create-another-button" onclick="createAnotherInvoice()">Create Another Invoice</button>
+            <button type="button" onclick="openModal('add')">Add a Job Print</button>
+            <!-- New Download Link Button (Initially hidden) -->
+            <a id="pdf-download-btn" class="download-link" style="display: none;">Download PDF</a>
+        </div>
+    </div>
+
+    <!-- Modal for Adding/Editing Job Prints -->
+    <div id="jobPrintModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title">Add Job Print</h2>
+            <div class="form-group">
+                <label for="modal-description">Job Description</label>
+                <select id="modal-description" required>
+                    <option value="Black & White Single-Sheet">Black & White Single-Sheet</option>
+                    <option value="Color Single-Sheet">Color Single-Sheet</option>
+                    <option value="Black & White Double-Sided">Black & White Double-Sided</option>
+                    <option value="Color Double-Sided">Color Double-Sided</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="modal-pages">Number of Pages</label>
+                <input type="number" id="modal-pages" required>
+            </div>
+            <div class="form-group">
+                <button type="button" id="modal-action-button" onclick="addJobPrintFromModal()">Add Job Print</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Libraries and CDN links for functionality -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+
+    <script>
+
+AOS.init();
+
+let invoiceCount = parseInt(localStorage.getItem('invoiceCount')) || 0;
+document.getElementById('invoice-count').innerText = invoiceCount;
+
+let editingRow = null; // Track the row that is being edited
+
+// Replace this with your actual Web App URL
+const scriptURL = 'https://script.google.com/macros/s/AKfycbytUJHoO61f84hviRLiv-cVzN7K7Rd7R53TCuzudqwph_U1BJYYfxUSS8iMq3LHAJqo/exec';
+
+// Function to send data to Google Sheets
+function sendInvoiceToSheet(clientName, clientSurname, clientPhone, clientEmail, description, pages, type, pricePerPage, total) {
+    const data = {
+        clientName: clientName,
+        clientSurname: clientSurname,
+        clientPhone: clientPhone,
+        clientEmail: clientEmail,
+        jobDescription: description,
+        pages: pages,
+        type: type,
+        pricePerPage: pricePerPage,
+        total: total
+    };
+
+    // Add error handling for debugging CORS issues
+    console.log('Sending data to Google Sheets:', data);
+
+    fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        mode: 'no-cors' // Prevent CORS issues
+    })
+    .then(() => {
+        console.log('Data sent to Google Sheets successfully.');
+    })
+    .catch(error => {
+        console.error('Error sending data:', error);
+        alert("There was an issue pushing data to the Google Spreadsheet. Please try again.");
+    });
+}
+
+function generateInvoice() {
+    // Collect information from the form
+    const clientName = document.getElementById('client-name').value.trim();
+    const clientSurname = document.getElementById('client-surname').value.trim();
+    const clientPhone = document.getElementById('client-phone').value.trim();
+    const clientEmail = document.getElementById('client-email').value.trim();
+    const description = document.getElementById('description').value.trim();
+    const amountPaid = parseFloat(document.getElementById('amount-paid').value) || 0;
+    let pages = parseInt(document.getElementById('pages').value);
+
+    // Validation
+    document.getElementById('phone-error').style.display = 'none';
+    document.getElementById('email-error').style.display = 'none';
+
+    if (!/^\d{10}$/.test(clientPhone)) {
+        document.getElementById('phone-error').style.display = 'block';
+        return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail)) {
+        document.getElementById('email-error').style.display = 'block';
+        return;
+    }
+
+    if (!clientName || !clientSurname || !clientPhone || !clientEmail || !description || !pages) {
+        alert('Please fill in all fields.');
+        return;
+    }
+
+    // Price Calculation
+    let pricePerPage;
+    let type;
+    if (description.includes('Single-Sheet')) {
+        pricePerPage = description.includes('Black & White') ? 3.00 : 5.00;
+        type = 'Single-Sided';
+    } else {
+        if (pages < 2) {
+            pages = 2; // Enforce a minimum of 2 pages for double-sided printing
+        }
+        pricePerPage = description.includes('Black & White') ? 1.50 : 2.50;
+        type = 'Double-Sided';
+    }
+
+    const total = pricePerPage * pages;
+    const change = amountPaid - total; // Calculate the change
+
+    // Send the invoice data to Google Sheets
+    sendInvoiceToSheet(clientName, clientSurname, clientPhone, clientEmail, description, pages, type, pricePerPage.toFixed(2), total.toFixed(2));
+
+    // Update the UI
+    invoiceCount += 1;
+    localStorage.setItem('invoiceCount', invoiceCount);
+
+    document.getElementById('invoice-number').innerText = `Invoice Number: ${invoiceCount}`;
+    document.getElementById('client-details').innerHTML = `
+        <p>Client: ${clientName} ${clientSurname}</p>
+        <p>Phone: <a href="tel:${clientPhone}">${clientPhone}</a> | Email: <a href="mailto:${clientEmail}">${clientEmail}</a></p>
+    `;
+
+    // Set the initial job print
+    document.getElementById('invoice-body').innerHTML = `
+        <tr>
+            <td>${description}</td>
+            <td>${pages}</td>
+            <td>${type}</td>
+            <td>${pricePerPage.toFixed(2)}</td>
+            <td>${total.toFixed(2)}</td>
+            <td>
+                <button class="edit-button" onclick="openModal('edit', this.closest('tr'))">Edit</button>
+                <button class="delete-button" onclick="deleteJobPrint(this)">Delete</button>
+            </td>
+        </tr>
+    `;
+
+    updateTotal();
+    displayPaymentDetails(amountPaid, change); // Display Amount Paid and Change
+
+    document.getElementById('home-page').classList.remove('active');
+    document.getElementById('invoice-page').classList.add('active');
+}
+
+// Display the Amount Paid and Change in the Invoice
+function displayPaymentDetails(amountPaid, change) {
+    document.getElementById('amount-paid-row').style.display = 'table-row';
+    document.getElementById('amount-paid-display').innerText = amountPaid.toFixed(2);
+
+    if (change >= 0) {
+        document.getElementById('change-row').style.display = 'table-row';
+        document.getElementById('change-display').innerText = change.toFixed(2);
+    } else {
+        document.getElementById('change-row').style.display = 'none'; // Hide if no change
+    }
+}
+
+function resetInvoiceCount() {
+    invoiceCount = 0;
+    localStorage.setItem('invoiceCount', invoiceCount);
+    alert('Invoice count has been reset.');
+    document.getElementById('invoice-count').innerText = invoiceCount;
+}
+
+function exportPDF() {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+
+    const clientName = document.getElementById('client-name').value.trim();
+    const clientSurname = document.getElementById('client-surname').value.trim();
+    const clientPhone = document.getElementById('client-phone').value;
+    const clientEmail = document.getElementById('client-email').value;
+
+    const invoiceNumber = document.getElementById('invoice-number').innerText.split(' ')[2];
+
+    const filename = `${clientName}_${clientSurname}_inv${invoiceNumber}.pdf`;
+
+    pdf.setFontSize(16);
+    pdf.text('Pro Print Solutions', pageWidth / 2, 15, { align: 'center' });
+    pdf.setFontSize(12);
+    pdf.text('Block 24 House 001 Ekhaya Junction', pageWidth / 2, 25, { align: 'center' });
+
+    const contactText = 'Phone: 072 617 1976 | Email: playgroundtest0@gmail.com';
+    const contactXPos = (pageWidth - pdf.getTextWidth(contactText)) / 2;
+
+    pdf.textWithLink('Phone: 072 617 1976', contactXPos, 30, { url: 'tel:0726171976' });
+    pdf.textWithLink('| Email: playgroundtest0@gmail.com', contactXPos + pdf.getTextWidth('Phone: 072 617 1976 | '), 30, { url: 'mailto:playgroundtest0@gmail.com' });
+
+    pdf.text(`Invoice Number: ${invoiceNumber}`, 15, 40);
+    pdf.text(`Client: ${clientName} ${clientSurname}`, 15, 50);
+    pdf.textWithLink(`Phone: ${clientPhone}`, 15, 60, { url: `tel:${clientPhone}` });
+    pdf.textWithLink(`Email: ${clientEmail}`, 15, 70, { url: `mailto:${clientEmail}` });
+
+    pdf.autoTable({
+        startY: 75,
+        head: [['Description', 'Pages', 'Type', 'Price per Page (Rands)', 'Total']],
+        body: Array.from(document.querySelectorAll('#invoice-body tr')).map(row =>
+            Array.from(row.children).map(cell => cell.innerText)
+        ),
+        theme: 'grid',
+        headStyles: { fillColor: [25, 188, 155] },
+    });
+
+    const grandTotal = document.getElementById('grand-total').innerText;
+    const amountPaid = document.getElementById('amount-paid-display').innerText;
+    const change = document.getElementById('change-display').innerText;
+
+    pdf.setFontSize(14);
+    pdf.text(grandTotal, 15, pdf.lastAutoTable.finalY + 20);
+    pdf.text(`Amount Paid: ${amountPaid}`, 15, pdf.lastAutoTable.finalY + 30);
+    pdf.text(`Change: ${change}`, 15, pdf.lastAutoTable.finalY + 40);
+
+    // Add a bold and slightly lowered "Thank you" message
+    pdf.setTextColor(163, 65, 64);
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    const thankYouMessage = 'Thank you for your support!';
+    pdf.text(thankYouMessage, pageWidth / 2, pdf.lastAutoTable.finalY + 55, { align: 'center' });
+
+    // Convert PDF to Blob and open in a new tab
+    const pdfBlob = pdf.output('blob');
+    const url = URL.createObjectURL(pdfBlob);
+    window.open(url); // Open in a new tab
+
+    // Show the hidden "Download PDF" button after generating the PDF
+    document.getElementById('pdf-download-btn').style.display = 'block';
+    document.getElementById('pdf-download-btn').href = url;
+    document.getElementById('pdf-download-btn').download = filename;
+}
+
+function createAnotherInvoice() {
+    document.getElementById('invoice-page').classList.remove('active');
+    document.getElementById('home-page').classList.add('active');
+    document.getElementById('client-name').value = '';
+    document.getElementById('client-surname').value = '';
+    document.getElementById('client-phone').value = '';
+    document.getElementById('client-email').value = '';
+    document.getElementById('description').value = '';
+    document.getElementById('pages').value = '';
+    document.getElementById('amount-paid').value = '';
+    document.getElementById('pdf-download-btn').style.display = 'none';
+}
+
+function openModal(mode, row = null) {
+    if (mode === 'edit') {
+        document.getElementById('modal-title').innerText = 'Edit Job Print';
+        document.getElementById('modal-action-button').innerText = 'Save Changes';
+        editingRow = row;
+        document.getElementById('modal-description').value = row.cells[0].innerText;
+        document.getElementById('modal-pages').value = row.cells[1].innerText;
+    } else {
+        document.getElementById('modal-title').innerText = 'Add Job Print';
+        document.getElementById('modal-action-button').innerText = 'Add Job Print';
+        editingRow = null;
+        document.getElementById('modal-description').value = '';
+        document.getElementById('modal-pages').value = '';
+    }
+    document.getElementById('jobPrintModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('jobPrintModal').style.display = 'none';
+}
+
+function addJobPrintFromModal() {
+    const description = document.getElementById('modal-description').value.trim();
+    let pages = parseInt(document.getElementById('modal-pages').value);
+
+    if (!description || !pages) {
+        alert('Please fill in job description and number of pages.');
+        return;
+    }
+
+    let pricePerPage;
+    let type;
+    if (description.includes('Single-Sheet')) {
+        pricePerPage = description.includes('Black & White') ? 3.00 : 5.00;
+        type = 'Single-Sided';
+    } else {
+        if (pages < 2) {
+            pages = 2; // Enforce a minimum of 2 pages for double-sided printing
+        }
+        pricePerPage = description.includes('Black & White') ? 1.50 : 2.50;
+        type = 'Double-Sided';
+    }
+
+    const total = pricePerPage * pages;
+
+    if (editingRow) {
+        editingRow.cells[0].innerText = description;
+        editingRow.cells[1].innerText = pages;
+        editingRow.cells[2].innerText = type;
+        editingRow.cells[3].innerText = pricePerPage.toFixed(2);
+        editingRow.cells[4].innerText = total.toFixed(2);
+    } else {
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${description}</td>
+            <td>${pages}</td>
+            <td>${type}</td>
+            <td>${pricePerPage.toFixed(2)}</td>
+            <td>${total.toFixed(2)}</td>
+            <td>
+                <button class="edit-button" onclick="openModal('edit', this.closest('tr'))">Edit</button>
+                <button class="delete-button" onclick="deleteJobPrint(this)">Delete</button>
+            </td>
+        `;
+        document.getElementById('invoice-body').appendChild(newRow);
+    }
+
+    updateTotal();
+    closeModal();
+}
+
+function deleteJobPrint(button) {
+    const row = button.closest('tr');
+    row.remove();
+    updateTotal();
+}
+
+function updateTotal() {
+    const rows = document.getElementById('invoice-body').rows;
+    let grandTotal = 0;
+    for (let i = 0; i < rows.length; i++) {
+        const totalCell = rows[i].cells[4];
+        grandTotal += parseFloat(totalCell.innerText);
+    }
+    document.getElementById('invoice-total').innerText = grandTotal.toFixed(2);
+    document.getElementById('grand-total').innerText = `Grand Total: ${grandTotal.toFixed(2)} Rands`;
+}
+
+    </script>
+
+</body>
+
+</html>
+
